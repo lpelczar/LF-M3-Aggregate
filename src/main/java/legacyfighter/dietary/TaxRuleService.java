@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.Clock;
 import java.time.Instant;
 import java.time.Year;
 import java.util.List;
@@ -20,6 +21,9 @@ public class TaxRuleService {
 
     @Autowired
     private OrderRepository orderRepository;
+    
+    @Autowired
+    private Clock clock;
 
     @Transactional
     public void addTaxRuleToCountry(String countryCode, int aFactor, int bFactor, String taxCode) {
@@ -34,7 +38,7 @@ public class TaxRuleService {
         taxRule.setaFactor(aFactor);
         taxRule.setbFactor(bFactor);
         taxRule.setLinear(true);
-        int year = Year.now().getValue();
+        int year = Year.now(clock).getValue();
         taxRule.setTaxCode("A. 899. " + year + taxCode);
         TaxConfig taxConfig = taxConfigRepository.findByCountryCode(countryCode);
         if (taxConfig == null) {
@@ -47,7 +51,7 @@ public class TaxRuleService {
 
         taxConfig.getTaxRules().add(taxRule);
         taxConfig.setCurrentRulesCount(taxConfig.getCurrentRulesCount() + 1);
-        taxConfig.setLastModifiedDate(Instant.now());
+        taxConfig.setLastModifiedDate(Instant.now(clock));
 
         List<Order> byOrderState = orderRepository.findByOrderState(Order.OrderState.Initial);
 
@@ -67,7 +71,7 @@ public class TaxRuleService {
         taxConfig.getTaxRules().add(taxRule);
         taxConfig.setCurrentRulesCount(taxConfig.getTaxRules().size());
         taxConfig.setMaxRulesCount(10);
-        taxConfig.setLastModifiedDate(Instant.now());
+        taxConfig.setLastModifiedDate(Instant.now(clock));
         if (countryCode == null || countryCode.equals("") || countryCode.length() == 1) {
             throw new IllegalStateException("Invalid country code");
         }
@@ -83,7 +87,7 @@ public class TaxRuleService {
         taxConfig.getTaxRules().add(taxRule);
         taxConfig.setCurrentRulesCount(taxConfig.getTaxRules().size());
         taxConfig.setMaxRulesCount(maxRulesCount);
-        taxConfig.setLastModifiedDate(Instant.now());
+        taxConfig.setLastModifiedDate(Instant.now(clock));
         if (countryCode == null || countryCode.equals("") || countryCode.length() == 1) {
             throw new IllegalStateException("Invalid country code");
         }
@@ -105,7 +109,7 @@ public class TaxRuleService {
         taxRule.setbSquareFactor(bFactor);
         taxRule.setcSuqreFactor(cFactor);
         taxRule.setSquare(true);
-        int year = Year.now().getValue();
+        int year = Year.now(clock).getValue();
         taxRule.setTaxCode("A. 899. " + year + taxCode);
         TaxConfig taxConfig = taxConfigRepository.findByCountryCode(countryCode);
         if (taxConfig == null) {
@@ -113,7 +117,7 @@ public class TaxRuleService {
         }
         taxConfig.getTaxRules().add(taxRule);
         taxConfig.setCurrentRulesCount(taxConfig.getCurrentRulesCount() + 1);
-        taxConfig.setLastModifiedDate(Instant.now());
+        taxConfig.setLastModifiedDate(Instant.now(clock));
     }
 
     @Transactional
@@ -126,7 +130,7 @@ public class TaxRuleService {
             }
             taxRuleRepository.delete(taxRule);
             taxConfig.getTaxRules().remove(taxRule);
-            taxConfig.setLastModifiedDate(Instant.now());
+            taxConfig.setLastModifiedDate(Instant.now(clock));
             taxConfig.setCurrentRulesCount(taxConfig.getCurrentRulesCount() - 1);
         }
 
