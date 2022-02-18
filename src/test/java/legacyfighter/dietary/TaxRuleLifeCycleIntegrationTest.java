@@ -338,14 +338,4 @@ class TaxRuleLifeCycleIntegrationTest {
         taxRule.setbFactor(bFactor);
         return taxRule;
     }
-
-    private TaxRule squareTaxRule(String taxCode, int aFactor, int bFactor, int cFactor) {
-        TaxRule taxRule = new TaxRule();
-        taxRule.setTaxCode(taxCode);
-        taxRule.setLinear(true);
-        taxRule.setaSquareFactor(aFactor);
-        taxRule.setbSquareFactor(bFactor);
-        taxRule.setcSuqreFactor(cFactor);
-        return taxRule;
-    }
 }

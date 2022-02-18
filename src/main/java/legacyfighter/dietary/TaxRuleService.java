@@ -61,29 +61,13 @@ public class TaxRuleService {
 
     @Transactional
     public TaxConfig createTaxConfigWithRule(String countryCode, TaxRule taxRule) {
-        TaxConfig taxConfig = new TaxConfig();
-        taxConfig.setCountryCode(countryCode);
-        taxConfig.setMaxRulesCount(10);
-        taxConfig.addTaxRule(taxRule, Instant.now(clock));
-        if (countryCode == null || countryCode.equals("") || countryCode.length() == 1) {
-            throw new IllegalStateException("Invalid country code");
-        }
-
-        taxConfigRepository.save(taxConfig);
-        return taxConfig;
+        return createTaxConfigWithRule(countryCode, 10, taxRule);
     }
 
     @Transactional
     public TaxConfig createTaxConfigWithRule(String countryCode, int maxRulesCount, TaxRule taxRule) {
-        TaxConfig taxConfig = new TaxConfig();
-        taxConfig.setCountryCode(countryCode);
-        taxConfig.setMaxRulesCount(maxRulesCount);
+        TaxConfig taxConfig = TaxConfig.from(countryCode, maxRulesCount);
         taxConfig.addTaxRule(taxRule, Instant.now(clock));
-
-        if (countryCode == null || countryCode.equals("") || countryCode.length() == 1) {
-            throw new IllegalStateException("Invalid country code");
-        }
-
         taxConfigRepository.save(taxConfig);
         return taxConfig;
     }

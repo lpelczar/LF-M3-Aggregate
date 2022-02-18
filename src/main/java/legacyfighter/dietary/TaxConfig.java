@@ -22,6 +22,19 @@ public class TaxConfig {
     @OneToMany(cascade = CascadeType.ALL)
     private List<TaxRule> taxRules = new ArrayList<>();
 
+    private TaxConfig(String countryCode, int maxRulesCount) {
+        if (countryCode == null || countryCode.equals("") || countryCode.length() == 1) {
+            throw new IllegalStateException("Invalid country code");
+        }
+
+        this.countryCode = countryCode;
+        this.maxRulesCount = maxRulesCount;
+    }
+
+    public static TaxConfig from(String countryCode, int maxRulesCount) {
+        return new TaxConfig(countryCode, maxRulesCount);
+    }
+
     public void addTaxRule(TaxRule taxRule, Instant moment) {
         if (taxRules.size() >= maxRulesCount) {
             throw new IllegalStateException("Cannot add more rules");
@@ -46,16 +59,8 @@ public class TaxConfig {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public String getCountryReason() {
         return countryReason;
-    }
-
-    public void setCountryReason(String countryReason) {
-        this.countryReason = countryReason;
     }
 
     public String getCountryCode() {
@@ -70,17 +75,8 @@ public class TaxConfig {
         return lastModifiedDate;
     }
 
-    public void setLastModifiedDate(Instant lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
-    }
-
-
     public int getCurrentRulesCount() {
         return currentRulesCount;
-    }
-
-    public void setCurrentRulesCount(int currentRulesCount) {
-        this.currentRulesCount = currentRulesCount;
     }
 
     public int getMaxRulesCount() {
@@ -90,8 +86,6 @@ public class TaxConfig {
     public void setMaxRulesCount(int maxRulesCount) {
         this.maxRulesCount = maxRulesCount;
     }
-
-
 
     public List<TaxRule> getTaxRules() {
         return taxRules;
