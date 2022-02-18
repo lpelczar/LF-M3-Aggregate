@@ -68,6 +68,7 @@ public class TaxRuleService {
         TaxConfig taxConfig = taxConfigRepository.findByCountryCode(codeVO.getCode());
         if (taxConfig == null) {
             createTaxConfigWithRule(codeVO.getCode(), taxRule);
+            return;
         }
 
         taxConfig.addTaxRule(taxRule, Instant.now(clock));
@@ -83,11 +84,6 @@ public class TaxRuleService {
     @Transactional
     public List<TaxRule> findRules(String countryCode) {
         return taxConfigRepository.findByCountryCode(countryCode).getTaxRules();
-    }
-
-    @Transactional
-    public int rulesCount(String countryCode) {
-        return taxConfigRepository.findByCountryCode(countryCode).getCurrentRulesCount();
     }
 
     public List<TaxConfig> findAllConfigs() {

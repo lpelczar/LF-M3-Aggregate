@@ -63,10 +63,6 @@ public class TaxConfig {
         return countryCode;
     }
 
-    public void setCountryCode(String countryCode) {
-        this.countryCode = countryCode;
-    }
-
     public Instant getLastModifiedDate() {
         return lastModifiedDate;
     }
