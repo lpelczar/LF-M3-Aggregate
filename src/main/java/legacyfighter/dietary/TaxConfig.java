@@ -19,7 +19,10 @@ public class TaxConfig {
     private Long id;
     private String description;
     private String countryReason;
-    private String countryCode;
+
+    @Embedded
+    private CountryCode countryCode;
+
     private Instant lastModifiedDate;
     private int currentRulesCount;
     private int maxRulesCount;
@@ -28,12 +31,12 @@ public class TaxConfig {
     private List<TaxRule> taxRules = new ArrayList<>();
 
     private TaxConfig(CountryCode countryCode, int maxRulesCount) {
-        this.countryCode = countryCode.getCode();
+        this.countryCode = countryCode;
         this.maxRulesCount = maxRulesCount;
     }
 
-    public static TaxConfig from(CountryCode countryCode, int maxRulesCount) {
-        return new TaxConfig(countryCode, maxRulesCount);
+    public static TaxConfig from(String countryCode, int maxRulesCount) {
+        return new TaxConfig(CountryCode.from(countryCode), maxRulesCount);
     }
 
     public void addTaxRule(TaxRule taxRule, Instant moment) {
@@ -65,7 +68,7 @@ public class TaxConfig {
     }
 
     public String getCountryCode() {
-        return countryCode;
+        return countryCode.asString();
     }
 
     public Instant getLastModifiedDate() {
@@ -102,21 +105,27 @@ public class TaxConfig {
     }
 }
 
+@Embeddable
 class CountryCode {
-    private final String code;
 
-    public String getCode() {
+    public CountryCode() {
+
+    }
+
+    private String code;
+
+    public String asString() {
         return code;
     }
 
     private CountryCode(String code) {
-        if (code == null || code.equals("") || code.length() == 1) {
-            throw new IllegalStateException("Invalid country code");
-        }
         this.code = code;
     }
 
     static CountryCode from(String code) {
+        if (code == null || code.equals("") || code.length() == 1) {
+            throw new IllegalStateException("Invalid country code");
+        }
         return new CountryCode(code);
     }
 }

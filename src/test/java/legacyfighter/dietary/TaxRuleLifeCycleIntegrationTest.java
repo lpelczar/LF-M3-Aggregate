@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.*;
@@ -110,14 +111,14 @@ class TaxRuleLifeCycleIntegrationTest {
     @Test
     void shouldFailToAddTaxRuleToCountry() {
         //expect
-        assertThrows(IllegalStateException.class, () -> taxRuleService.addTaxRuleToCountry(null, 2, 3, "tax"));
-        assertThrows(IllegalStateException.class, () -> taxRuleService.addTaxRuleToCountry("", 2, 3, "tax"));
-        assertThrows(IllegalStateException.class, () -> taxRuleService.addTaxRuleToCountry("l", 2, 3, "tax"));
+        assertThrows(InvalidDataAccessApiUsageException.class, () -> taxRuleService.addTaxRuleToCountry(null, 2, 3, "tax"));
+        assertThrows(InvalidDataAccessApiUsageException.class, () -> taxRuleService.addTaxRuleToCountry("", 2, 3, "tax"));
+        assertThrows(InvalidDataAccessApiUsageException.class, () -> taxRuleService.addTaxRuleToCountry("l", 2, 3, "tax"));
         assertThrows(IllegalStateException.class, () -> taxRuleService.addTaxRuleToCountry("code", 0, 3, "tax"));
 
-        assertThrows(IllegalStateException.class, () -> taxRuleService.addTaxRuleToCountry(null, 2, 3, 4, "tax"));
-        assertThrows(IllegalStateException.class, () -> taxRuleService.addTaxRuleToCountry("", 2, 3, 4, "tax"));
-        assertThrows(IllegalStateException.class, () -> taxRuleService.addTaxRuleToCountry("l", 2, 3,4,  "tax"));
+        assertThrows(InvalidDataAccessApiUsageException.class, () -> taxRuleService.addTaxRuleToCountry(null, 2, 3, 4, "tax"));
+        assertThrows(InvalidDataAccessApiUsageException.class, () -> taxRuleService.addTaxRuleToCountry("", 2, 3, 4, "tax"));
+        assertThrows(InvalidDataAccessApiUsageException.class, () -> taxRuleService.addTaxRuleToCountry("l", 2, 3,4,  "tax"));
         assertThrows(IllegalStateException.class, () -> taxRuleService.addTaxRuleToCountry("code", 0, 3, 4, "tax"));
     }
 

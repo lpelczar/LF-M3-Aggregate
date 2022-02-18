@@ -28,12 +28,11 @@ public class TaxRuleService {
 
     @Transactional
     public void addTaxRuleToCountry(String countryCode, int aFactor, int bFactor, String taxCode) {
-        CountryCode codeVO = CountryCode.from(countryCode);
         TaxRule taxRule = TaxRule.linearRule(aFactor, bFactor, taxCode, Year.now(clock));
 
-        TaxConfig taxConfig = taxConfigRepository.findByCountryCode(codeVO.getCode());
+        TaxConfig taxConfig = taxConfigRepository.findByCountryCode(countryCode);
         if (taxConfig == null) {
-            createTaxConfigWithRule(codeVO.getCode(), taxRule);
+            createTaxConfigWithRule(countryCode, taxRule);
             return;
         }
 
@@ -55,7 +54,7 @@ public class TaxRuleService {
 
     @Transactional
     public TaxConfig createTaxConfigWithRule(String countryCode, int maxRulesCount, TaxRule taxRule) {
-        TaxConfig taxConfig = TaxConfig.from(CountryCode.from(countryCode), maxRulesCount);
+        TaxConfig taxConfig = TaxConfig.from(countryCode, maxRulesCount);
         taxConfig.addTaxRule(taxRule, Instant.now(clock));
         taxConfigRepository.save(taxConfig);
         return taxConfig;
@@ -63,12 +62,11 @@ public class TaxRuleService {
 
     @Transactional
     public void addTaxRuleToCountry(String countryCode, int aFactor, int bFactor, int cFactor, String taxCode) {
-        CountryCode codeVO = CountryCode.from(countryCode);
         TaxRule taxRule = TaxRule.squareRule(aFactor, bFactor, cFactor, taxCode, Year.now(clock));
 
-        TaxConfig taxConfig = taxConfigRepository.findByCountryCode(codeVO.getCode());
+        TaxConfig taxConfig = taxConfigRepository.findByCountryCode(countryCode);
         if (taxConfig == null) {
-            createTaxConfigWithRule(codeVO.getCode(), taxRule);
+            createTaxConfigWithRule(countryCode, taxRule);
             return;
         }
 
