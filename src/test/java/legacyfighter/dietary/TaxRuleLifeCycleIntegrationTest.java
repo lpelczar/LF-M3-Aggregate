@@ -274,6 +274,45 @@ class TaxRuleLifeCycleIntegrationTest {
         assertEquals(4, newRule.getcSuqreFactor());
     }
 
+    @Test
+    void shouldRemoveRule() {
+        //given
+        String countryCode = "pl";
+        TaxRule linearTaxRule = linearTaxRule("B1", 5, 6);
+        TaxConfig taxConfig = taxRuleService.createTaxConfigWithRule(countryCode, linearTaxRule);
+        taxRuleService.addTaxRuleToCountry(countryCode, 2, 3, "B2");
+
+        //and
+        Instant expectedDeletionDate = Instant.now();
+        when(clock.instant()).thenReturn(expectedDeletionDate);
+
+        //when
+        taxRuleService.deleteRule(taxConfig.getTaxRules().get(1).getId(), taxConfig.getId());
+
+        //then
+        TaxConfig taxConfigResult = taxConfigRepository.findByCountryCode(countryCode);
+        assertEquals(expectedDeletionDate,  taxConfigResult.getLastModifiedDate());
+        assertEquals(1, taxConfigResult.getCurrentRulesCount());
+        assertEquals(1, taxConfig.getTaxRules().size());
+
+        TaxRule taxRuleResult = taxConfig.getTaxRules().get(0);
+        assertEquals("B1", taxRuleResult.getTaxCode());
+        assertTrue(taxRuleResult.isLinear());
+        assertEquals(5, taxRuleResult.getaFactor());
+        assertEquals(6, taxRuleResult.getbFactor());
+    }
+
+    @Test
+    void shouldFailToRemoveRule() {
+        //given
+        String countryCode = "pl";
+        TaxRule linearTaxRule = linearTaxRule("B1", 5, 6);
+        TaxConfig taxConfig = taxRuleService.createTaxConfigWithRule(countryCode, linearTaxRule);
+
+        //expect
+        assertThrows(IllegalStateException.class, () -> taxRuleService.deleteRule(taxConfig.getTaxRules().get(0).getId(), taxConfig.getId()));
+    }
+
     private TaxRule linearTaxRule(String taxCode, int aFactor, int bFactor) {
         TaxRule taxRule = new TaxRule();
         taxRule.setTaxCode(taxCode);
