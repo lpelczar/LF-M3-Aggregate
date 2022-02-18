@@ -45,13 +45,8 @@ public class TaxRuleService {
             taxConfig = createTaxConfigWithRule(countryCode, taxRule);
             return;
         }
-        if (taxConfig.getMaxRulesCount() <= taxConfig.getTaxRules().size()) {
-            throw new IllegalStateException("Too many rules");
-        }
 
-        taxConfig.getTaxRules().add(taxRule);
-        taxConfig.setCurrentRulesCount(taxConfig.getCurrentRulesCount() + 1);
-        taxConfig.setLastModifiedDate(Instant.now(clock));
+        taxConfig.addTaxRule(taxRule, Instant.now(clock));
 
         List<Order> byOrderState = orderRepository.findByOrderState(Order.OrderState.Initial);
 
@@ -68,10 +63,8 @@ public class TaxRuleService {
     public TaxConfig createTaxConfigWithRule(String countryCode, TaxRule taxRule) {
         TaxConfig taxConfig = new TaxConfig();
         taxConfig.setCountryCode(countryCode);
-        taxConfig.getTaxRules().add(taxRule);
-        taxConfig.setCurrentRulesCount(taxConfig.getTaxRules().size());
         taxConfig.setMaxRulesCount(10);
-        taxConfig.setLastModifiedDate(Instant.now(clock));
+        taxConfig.addTaxRule(taxRule, Instant.now(clock));
         if (countryCode == null || countryCode.equals("") || countryCode.length() == 1) {
             throw new IllegalStateException("Invalid country code");
         }
@@ -84,10 +77,9 @@ public class TaxRuleService {
     public TaxConfig createTaxConfigWithRule(String countryCode, int maxRulesCount, TaxRule taxRule) {
         TaxConfig taxConfig = new TaxConfig();
         taxConfig.setCountryCode(countryCode);
-        taxConfig.getTaxRules().add(taxRule);
-        taxConfig.setCurrentRulesCount(taxConfig.getTaxRules().size());
         taxConfig.setMaxRulesCount(maxRulesCount);
-        taxConfig.setLastModifiedDate(Instant.now(clock));
+        taxConfig.addTaxRule(taxRule, Instant.now(clock));
+
         if (countryCode == null || countryCode.equals("") || countryCode.length() == 1) {
             throw new IllegalStateException("Invalid country code");
         }
@@ -115,25 +107,14 @@ public class TaxRuleService {
         if (taxConfig == null) {
             createTaxConfigWithRule(countryCode, taxRule);
         }
-        taxConfig.getTaxRules().add(taxRule);
-        taxConfig.setCurrentRulesCount(taxConfig.getCurrentRulesCount() + 1);
-        taxConfig.setLastModifiedDate(Instant.now(clock));
+        taxConfig.addTaxRule(taxRule, Instant.now(clock));
     }
 
     @Transactional
     public void deleteRule(Long taxRuleId, Long configId) {
         TaxRule taxRule = taxRuleRepository.getOne(taxRuleId);
         TaxConfig taxConfig = taxConfigRepository.getOne(configId);
-        if (taxConfig.getTaxRules().contains(taxRule)) {
-            if (taxConfig.getTaxRules().size() == 1) {
-                throw new IllegalStateException("Last rule in country config");
-            }
-            taxRuleRepository.delete(taxRule);
-            taxConfig.getTaxRules().remove(taxRule);
-            taxConfig.setLastModifiedDate(Instant.now(clock));
-            taxConfig.setCurrentRulesCount(taxConfig.getCurrentRulesCount() - 1);
-        }
-
+        taxConfig.removeTaxRule(taxRule, Instant.now(clock));
     }
 
     @Transactional

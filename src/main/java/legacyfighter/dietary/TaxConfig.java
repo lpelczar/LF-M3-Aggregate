@@ -20,7 +20,27 @@ public class TaxConfig {
     private int maxRulesCount;
 
     @OneToMany(cascade = CascadeType.ALL)
-    private List<TaxRule> taxRules = new ArrayList<>(); //usuwanieo z lastModifiedDate + liczniki,
+    private List<TaxRule> taxRules = new ArrayList<>();
+
+    public void addTaxRule(TaxRule taxRule, Instant moment) {
+        if (taxRules.size() >= maxRulesCount) {
+            throw new IllegalStateException("Cannot add more rules");
+        }
+        taxRules.add(taxRule);
+        lastModifiedDate = moment;
+        currentRulesCount++;
+    }
+
+    public void removeTaxRule(TaxRule taxRule, Instant moment) {
+        if (taxRules.contains(taxRule)) {
+            if (taxRules.size() == 1) {
+                throw new IllegalStateException("Last rule in country config");
+            }
+            taxRules.remove(taxRule);
+            lastModifiedDate = moment;
+            currentRulesCount--;
+        }
+    }
 
     public String getDescription() {
         return description;
