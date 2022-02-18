@@ -84,10 +84,6 @@ public class TaxConfig {
         return Collections.unmodifiableList(taxRules);
     }
 
-    public void setTaxRules(List<TaxRule> taxRules) {
-        this.taxRules = taxRules;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
