@@ -22,16 +22,12 @@ public class TaxConfig {
     @OneToMany(cascade = CascadeType.ALL)
     private List<TaxRule> taxRules = new ArrayList<>();
 
-    private TaxConfig(String countryCode, int maxRulesCount) {
-        if (countryCode == null || countryCode.equals("") || countryCode.length() == 1) {
-            throw new IllegalStateException("Invalid country code");
-        }
-
-        this.countryCode = countryCode;
+    private TaxConfig(CountryCode countryCode, int maxRulesCount) {
+        this.countryCode = countryCode.getCode();
         this.maxRulesCount = maxRulesCount;
     }
 
-    public static TaxConfig from(String countryCode, int maxRulesCount) {
+    public static TaxConfig from(CountryCode countryCode, int maxRulesCount) {
         return new TaxConfig(countryCode, maxRulesCount);
     }
 
@@ -110,5 +106,24 @@ public class TaxConfig {
 
     public Long getId() {
         return id;
+    }
+}
+
+class CountryCode {
+    private final String code;
+
+    public String getCode() {
+        return code;
+    }
+
+    private CountryCode(String code) {
+        if (code == null || code.equals("") || code.length() == 1) {
+            throw new IllegalStateException("Invalid country code");
+        }
+        this.code = code;
+    }
+
+    static CountryCode from(String code) {
+        return new CountryCode(code);
     }
 }

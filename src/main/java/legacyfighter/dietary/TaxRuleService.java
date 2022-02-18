@@ -27,9 +27,8 @@ public class TaxRuleService {
 
     @Transactional
     public void addTaxRuleToCountry(String countryCode, int aFactor, int bFactor, String taxCode) {
-        if (countryCode == null || countryCode.equals("") || countryCode.length() == 1) {
-            throw new IllegalStateException("Invalid country code");
-        }
+        CountryCode codeVO = CountryCode.from(countryCode);
+
         if (aFactor == 0) {
             throw new IllegalStateException("Invalid aFactor");
 
@@ -40,9 +39,9 @@ public class TaxRuleService {
         taxRule.setLinear(true);
         int year = Year.now(clock).getValue();
         taxRule.setTaxCode("A. 899. " + year + taxCode);
-        TaxConfig taxConfig = taxConfigRepository.findByCountryCode(countryCode);
+        TaxConfig taxConfig = taxConfigRepository.findByCountryCode(codeVO.getCode());
         if (taxConfig == null) {
-            taxConfig = createTaxConfigWithRule(countryCode, taxRule);
+            taxConfig = createTaxConfigWithRule(codeVO.getCode(), taxRule);
             return;
         }
 
@@ -66,7 +65,7 @@ public class TaxRuleService {
 
     @Transactional
     public TaxConfig createTaxConfigWithRule(String countryCode, int maxRulesCount, TaxRule taxRule) {
-        TaxConfig taxConfig = TaxConfig.from(countryCode, maxRulesCount);
+        TaxConfig taxConfig = TaxConfig.from(CountryCode.from(countryCode), maxRulesCount);
         taxConfig.addTaxRule(taxRule, Instant.now(clock));
         taxConfigRepository.save(taxConfig);
         return taxConfig;
@@ -77,9 +76,9 @@ public class TaxRuleService {
         if (aFactor == 0) {
             throw new IllegalStateException("Invalid aFactor");
         }
-        if (countryCode == null || countryCode.equals("") || countryCode.length() == 1) {
-            throw new IllegalStateException("Invalid country code");
-        }
+
+        CountryCode codeVO = CountryCode.from(countryCode);
+
         TaxRule taxRule = new TaxRule();
         taxRule.setaSquareFactor(aFactor);
         taxRule.setbSquareFactor(bFactor);
@@ -87,9 +86,9 @@ public class TaxRuleService {
         taxRule.setSquare(true);
         int year = Year.now(clock).getValue();
         taxRule.setTaxCode("A. 899. " + year + taxCode);
-        TaxConfig taxConfig = taxConfigRepository.findByCountryCode(countryCode);
+        TaxConfig taxConfig = taxConfigRepository.findByCountryCode(codeVO.getCode());
         if (taxConfig == null) {
-            createTaxConfigWithRule(countryCode, taxRule);
+            createTaxConfigWithRule(codeVO.getCode(), taxRule);
         }
         taxConfig.addTaxRule(taxRule, Instant.now(clock));
     }
