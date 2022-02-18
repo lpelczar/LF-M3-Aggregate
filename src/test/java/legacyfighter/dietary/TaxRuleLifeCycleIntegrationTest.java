@@ -303,6 +303,23 @@ class TaxRuleLifeCycleIntegrationTest {
     }
 
     @Test
+    void shouldNotRemoveRule() {
+        //given
+        String countryCode = "pl";
+        TaxRule linearTaxRule1 = linearTaxRule("B1", 5, 6);
+        TaxRule linearTaxRule2 = linearTaxRule("B2", 5, 6);
+        TaxConfig taxConfig1 = taxRuleService.createTaxConfigWithRule(countryCode, linearTaxRule1);
+        TaxConfig taxConfig2 = taxRuleService.createTaxConfigWithRule(countryCode, linearTaxRule2);
+
+        //when
+        taxRuleService.deleteRule(taxConfig1.getTaxRules().get(0).getId(), taxConfig2.getId());
+
+        //then
+        assertEquals(1, taxConfig1.getTaxRules().size());
+        assertEquals(1, taxConfig2.getTaxRules().size());
+    }
+
+    @Test
     void shouldFailToRemoveRule() {
         //given
         String countryCode = "pl";
