@@ -81,7 +81,7 @@ public class TaxRule {
         return bSquareFactor;
     }
 
-    public Integer getcSuqreFactor() {
+    public Integer getcSquareFactor() {
         return cSquareFactor;
     }
 

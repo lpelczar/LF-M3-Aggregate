@@ -231,7 +231,7 @@ class TaxRuleLifeCycleIntegrationTest {
         assertTrue(taxRule.isSquare());
         assertEquals(2, taxRule.getaSquareFactor());
         assertEquals(3, taxRule.getbSquareFactor());
-        assertEquals(4, taxRule.getcSuqreFactor());
+        assertEquals(4, taxRule.getcSquareFactor());
     }
 
     @Test
@@ -271,7 +271,7 @@ class TaxRuleLifeCycleIntegrationTest {
         assertTrue(newRule.isSquare());
         assertEquals(2, newRule.getaSquareFactor());
         assertEquals(3, newRule.getbSquareFactor());
-        assertEquals(4, newRule.getcSuqreFactor());
+        assertEquals(4, newRule.getcSquareFactor());
     }
 
     @Test

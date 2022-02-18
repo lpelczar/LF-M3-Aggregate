@@ -9,6 +9,10 @@ import java.util.Objects;
 @Entity
 public class TaxConfig {
 
+    public TaxConfig() {
+
+    }
+
     @Id
     @GeneratedValue
     private Long id;
