@@ -28,33 +28,22 @@ public class TaxRuleService {
     @Transactional
     public void addTaxRuleToCountry(String countryCode, int aFactor, int bFactor, String taxCode) {
         CountryCode codeVO = CountryCode.from(countryCode);
+        TaxRule taxRule = TaxRule.linearRule(aFactor, bFactor, taxCode, Year.now(clock));
 
-        if (aFactor == 0) {
-            throw new IllegalStateException("Invalid aFactor");
-
-        }
-        TaxRule taxRule = new TaxRule();
-        taxRule.setaFactor(aFactor);
-        taxRule.setbFactor(bFactor);
-        taxRule.setLinear(true);
-        int year = Year.now(clock).getValue();
-        taxRule.setTaxCode("A. 899. " + year + taxCode);
         TaxConfig taxConfig = taxConfigRepository.findByCountryCode(codeVO.getCode());
         if (taxConfig == null) {
-            taxConfig = createTaxConfigWithRule(codeVO.getCode(), taxRule);
+            createTaxConfigWithRule(codeVO.getCode(), taxRule);
             return;
         }
 
         taxConfig.addTaxRule(taxRule, Instant.now(clock));
 
         List<Order> byOrderState = orderRepository.findByOrderState(Order.OrderState.Initial);
-
         byOrderState.forEach(order -> {
             if (order.getCustomerOrderGroup().getCustomer().getType().equals(Customer.Type.Person)) {
                 order.getTaxRules().add(taxRule);
                 orderRepository.save(order);
             }
-
         });
     }
 
@@ -73,23 +62,14 @@ public class TaxRuleService {
 
     @Transactional
     public void addTaxRuleToCountry(String countryCode, int aFactor, int bFactor, int cFactor, String taxCode) {
-        if (aFactor == 0) {
-            throw new IllegalStateException("Invalid aFactor");
-        }
-
         CountryCode codeVO = CountryCode.from(countryCode);
+        TaxRule taxRule = TaxRule.squareRule(aFactor, bFactor, cFactor, taxCode, Year.now(clock));
 
-        TaxRule taxRule = new TaxRule();
-        taxRule.setaSquareFactor(aFactor);
-        taxRule.setbSquareFactor(bFactor);
-        taxRule.setcSuqreFactor(cFactor);
-        taxRule.setSquare(true);
-        int year = Year.now(clock).getValue();
-        taxRule.setTaxCode("A. 899. " + year + taxCode);
         TaxConfig taxConfig = taxConfigRepository.findByCountryCode(codeVO.getCode());
         if (taxConfig == null) {
             createTaxConfigWithRule(codeVO.getCode(), taxRule);
         }
+
         taxConfig.addTaxRule(taxRule, Instant.now(clock));
     }
 

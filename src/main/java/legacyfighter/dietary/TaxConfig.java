@@ -79,10 +79,6 @@ public class TaxConfig {
         return maxRulesCount;
     }
 
-    public void setMaxRulesCount(int maxRulesCount) {
-        this.maxRulesCount = maxRulesCount;
-    }
-
     public List<TaxRule> getTaxRules() {
         return taxRules;
     }

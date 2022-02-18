@@ -57,7 +57,7 @@ class TaxRuleLifeCycleIntegrationTest {
 
         TaxRule taxRule = taxRuleService.findRules(countryCode).get(0);
 
-        assertEquals("tax-code", taxRule.getTaxCode());
+        assertEquals("A. 899. 1989tax-code", taxRule.getTaxCode());
         assertTrue(taxRule.isLinear());
         assertEquals(2, taxRule.getaFactor());
         assertEquals(3, taxRule.getbFactor());
@@ -88,7 +88,7 @@ class TaxRuleLifeCycleIntegrationTest {
 
         TaxRule taxRule = taxRuleService.findRules(countryCode).get(0);
 
-        assertEquals("tax-code", taxRule.getTaxCode());
+        assertEquals("A. 899. 1989tax-code", taxRule.getTaxCode());
         assertTrue(taxRule.isLinear());
         assertEquals(2, taxRule.getaFactor());
         assertEquals(3, taxRule.getbFactor());
@@ -187,7 +187,7 @@ class TaxRuleLifeCycleIntegrationTest {
         assertEquals(2, taxConfig.getTaxRules().size());
 
         TaxRule taxRule = taxConfig.getTaxRules().get(0);
-        assertEquals("B1", taxRule.getTaxCode());
+        assertEquals("A. 899. 1989B1", taxRule.getTaxCode());
         assertTrue(taxRule.isLinear());
         assertEquals(5, taxRule.getaFactor());
         assertEquals(6, taxRule.getbFactor());
@@ -261,7 +261,7 @@ class TaxRuleLifeCycleIntegrationTest {
         assertEquals(2, taxConfig.getTaxRules().size());
 
         TaxRule taxRule = taxConfig.getTaxRules().get(0);
-        assertEquals("B1", taxRule.getTaxCode());
+        assertEquals("A. 899. 1989B1", taxRule.getTaxCode());
         assertTrue(taxRule.isLinear());
         assertEquals(5, taxRule.getaFactor());
         assertEquals(6, taxRule.getbFactor());
@@ -296,7 +296,7 @@ class TaxRuleLifeCycleIntegrationTest {
         assertEquals(1, taxConfig.getTaxRules().size());
 
         TaxRule taxRuleResult = taxConfig.getTaxRules().get(0);
-        assertEquals("B1", taxRuleResult.getTaxCode());
+        assertEquals("A. 899. 1989B1", taxRuleResult.getTaxCode());
         assertTrue(taxRuleResult.isLinear());
         assertEquals(5, taxRuleResult.getaFactor());
         assertEquals(6, taxRuleResult.getbFactor());
@@ -331,11 +331,6 @@ class TaxRuleLifeCycleIntegrationTest {
     }
 
     private TaxRule linearTaxRule(String taxCode, int aFactor, int bFactor) {
-        TaxRule taxRule = new TaxRule();
-        taxRule.setTaxCode(taxCode);
-        taxRule.setLinear(true);
-        taxRule.setaFactor(aFactor);
-        taxRule.setbFactor(bFactor);
-        return taxRule;
+        return TaxRule.linearRule(aFactor, bFactor, taxCode, Year.of(1989));
     }
 }

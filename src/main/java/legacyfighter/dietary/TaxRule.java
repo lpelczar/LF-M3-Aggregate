@@ -1,6 +1,7 @@
 package legacyfighter.dietary;
 
 import javax.persistence.*;
+import java.time.Year;
 import java.util.Objects;
 
 @Entity
@@ -24,81 +25,64 @@ public class TaxRule {
     private boolean isSquare;
     private Integer aSquareFactor;
     private Integer bSquareFactor;
-    private Integer cSuqreFactor;
+    private Integer cSquareFactor;
 
     @ManyToOne
     private TaxConfig taxConfig;
 
-    public static TaxRule linearRule(int a, int b, String taxCode) {
+    public static TaxRule linearRule(int a, int b, String taxCode, Year year) {
+        if (a == 0) {
+            throw new IllegalStateException("Invalid aFactor");
+        }
+
         TaxRule rule = new TaxRule();
-        rule.setLinear(true);
-        rule.setTaxCode(taxCode);
-        rule.setaFactor(a);
-        rule.setbSquareFactor(b);
-        rule.setTaxCode(taxCode);
+        rule.isLinear = true;
+        rule.aFactor = a;
+        rule.bFactor = b;
+        rule.taxCode = "A. 899. " + year.getValue() + taxCode;
         return rule;
     }
 
+    public static TaxRule squareRule(int a, int b, int c, String taxCode, Year year) {
+        if (a == 0) {
+            throw new IllegalStateException("Invalid aFactor");
+        }
 
+        TaxRule rule = new TaxRule();
+        rule.isSquare = true;
+        rule.aSquareFactor = a;
+        rule.bSquareFactor = b;
+        rule.cSquareFactor = c;
+        rule.taxCode = "A. 899. " + year.getValue() + taxCode;
+        return rule;
+    }
 
     public boolean isLinear() {
         return isLinear;
-    }
-
-    public void setLinear(boolean linear) {
-        isLinear = linear;
     }
 
     public Integer getaFactor() {
         return aFactor;
     }
 
-    public void setaFactor(int aFactor) {
-        this.aFactor = aFactor;
-    }
-
     public Integer getbFactor() {
         return bFactor;
-    }
-
-    public void setbFactor(int bFactor) {
-        this.bFactor = bFactor;
     }
 
     public boolean isSquare() {
         return isSquare;
     }
 
-    public void setSquare(boolean square) {
-        isSquare = square;
-    }
-
     public Integer getaSquareFactor() {
         return aSquareFactor;
-    }
-
-    public void setaSquareFactor(int aSquareFactor) {
-        this.aSquareFactor = aSquareFactor;
     }
 
     public Integer getbSquareFactor() {
         return bSquareFactor;
     }
 
-    public void setbSquareFactor(int bSquareFactor) {
-        this.bSquareFactor = bSquareFactor;
-    }
-
     public Integer getcSuqreFactor() {
-        return cSuqreFactor;
-    }
-
-    public void setcSuqreFactor(int cSuqreFactor) {
-        this.cSuqreFactor = cSuqreFactor;
-    }
-
-    public void setTaxCode(String taxCode) {
-        this.taxCode = taxCode;
+        return cSquareFactor;
     }
 
     @Override
