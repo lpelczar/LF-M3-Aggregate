@@ -8,7 +8,8 @@ import javax.transaction.Transactional;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.Year;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class TaxRuleService {
@@ -21,7 +22,7 @@ public class TaxRuleService {
 
     @Autowired
     private OrderRepository orderRepository;
-    
+
     @Autowired
     private Clock clock;
 
@@ -86,7 +87,15 @@ public class TaxRuleService {
         return taxConfigRepository.findByCountryCode(countryCode).getTaxRules();
     }
 
-    public List<TaxConfig> findAllConfigs() {
-        return taxConfigRepository.findAll();
+    public Map<String, List<TaxRule>> findAllRules() {
+        return taxConfigRepository.findAll().stream()
+                .collect(Collectors.groupingBy(TaxConfig::getCountryCode,
+                        Collectors.mapping(
+                                TaxConfig::getTaxRules,
+                                Collectors.collectingAndThen(Collectors.toList(),
+                                        list -> list.stream()
+                                                .flatMap(List::stream)
+                                                .collect(Collectors.toList())))
+                ));
     }
 }

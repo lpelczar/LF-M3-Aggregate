@@ -40,12 +40,12 @@ class TaxRuleLifeCycleIntegrationTest {
         TaxRule linearTaxRule = linearTaxRule("tax-code", 2, 3);
 
         //when
-        taxRuleService.createTaxConfigWithRule(countryCode, linearTaxRule);
+        TaxConfig result = taxRuleService.createTaxConfigWithRule(countryCode, linearTaxRule);
 
         //then
-        assertEquals(1, taxRuleService.findAllConfigs().size());
+        assertEquals(1, taxRuleService.findAllRules().size());
         assertEquals(1, taxRuleService.findRules(countryCode).size());
-        TaxConfig taxConfig = taxRuleService.findAllConfigs().get(0);
+        TaxConfig taxConfig = taxConfigRepository.getOne(result.getId());
 
         assertNull(taxConfig.getDescription());
         assertNull(taxConfig.getCountryReason());
@@ -71,12 +71,12 @@ class TaxRuleLifeCycleIntegrationTest {
         int maxRulesCount = 12;
 
         //when
-        taxRuleService.createTaxConfigWithRule(countryCode, maxRulesCount, linearTaxRule);
+        TaxConfig result = taxRuleService.createTaxConfigWithRule(countryCode, maxRulesCount, linearTaxRule);
 
         //then
-        assertEquals(1, taxRuleService.findAllConfigs().size());
+        assertEquals(1, taxRuleService.findAllRules().size());
         assertEquals(1, taxRuleService.findRules(countryCode).size());
-        TaxConfig taxConfig = taxRuleService.findAllConfigs().get(0);
+        TaxConfig taxConfig = taxConfigRepository.getOne(result.getId());
 
         assertNull(taxConfig.getDescription());
         assertNull(taxConfig.getCountryReason());

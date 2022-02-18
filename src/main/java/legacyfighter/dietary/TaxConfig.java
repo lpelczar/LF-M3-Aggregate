@@ -3,6 +3,7 @@ package legacyfighter.dietary;
 import javax.persistence.*;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -80,7 +81,7 @@ public class TaxConfig {
     }
 
     public List<TaxRule> getTaxRules() {
-        return taxRules;
+        return Collections.unmodifiableList(taxRules);
     }
 
     public void setTaxRules(List<TaxRule> taxRules) {
