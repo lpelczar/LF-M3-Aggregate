@@ -1,4 +1,4 @@
-# LF-M3-Aggregate
+# LF-M3.1-Aggregate
 Legacy refactoring to Aggregate (DDD)
 
 Solved consistency problem for taxes
